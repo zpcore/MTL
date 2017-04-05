@@ -1,18 +1,14 @@
 #pragma once
 
+#include <vector>
 #include <list>
 #include <string>
-
+#include "Observer.h"
 using namespace std;
 
-typedef	struct{
-		int time;
-		int verdict;//0:false, 1:true, 2:maybe
-		int time_stamp;
-	}en;
-string verdict_interprete(int num);
 
-class Event{
+
+class Event: public Observer{
 
 //class variable
 public:
@@ -20,11 +16,11 @@ public:
 	en out_node;
 private:
 	list<en> event_list;
-
+	vector<int> event_list2;
 //class method
 public:
+	void check_new_event(int cur_time);
 	Event(string filename);
-	bool is_new_event(int cur_time);
 
 private:
 

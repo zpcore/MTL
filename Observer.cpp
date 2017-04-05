@@ -1,6 +1,5 @@
 //all the attributes of observers
 #include "Observer.h"
-#include "Event.h"
 #include <iostream>
 using namespace std;
 //constructor
@@ -13,7 +12,7 @@ Observer::Observer(Observer *cob, Observer *pob):child_observer_1(cob),parent_ob
 }
 
 /*constructor for bottom layer observer*/
-Observer::Observer(Event *ce1):child_event_1(ce1){
+Observer::Observer(Observer *cob):child_observer_1(cob){
 	last_node_1.time=-1;
 	last_node_1.verdict=0;
 	last_node_1.time_stamp=-1;
@@ -33,6 +32,14 @@ bool Observer::is_new_event(){//check new input
 	return false;
 }
 
+string verdict_interprete(int num){
+	switch(num){
+		case 0: return "TRUE";
+		case 1: return "FALSE";
+		case 2: return "MAYBE";
+		default: return "ERROR";
+	}
+}
 /*
 bool Observer::is_new_event(en e){//check new input
 	if(last_node_1.time!=e.time){
