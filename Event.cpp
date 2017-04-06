@@ -27,9 +27,9 @@ void Event::check_new_event(int cur_time){
 	if(!event_list.empty() && event_list.front().time==cur_time){
 		en front=event_list.front();
 		copy_en(out_node,front);
-//		cout << "Reading " << Event::filename << " @time " << out_node.time \
-//			<< ", verdict: " << verdict_interprete(out_node.verdict)\
-//			<< ", time stamp: "<<out_node.time_stamp<<endl;
+/*		cout << "Reading " << Event::filename << " @time " << out_node.time \
+			<< ", verdict: " << verdict_interprete(out_node.verdict)\
+			<< ", time stamp: "<<out_node.time_stamp<<endl;*/
 		event_list.pop_front();
 	}
 }

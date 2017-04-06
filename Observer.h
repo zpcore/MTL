@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <list>
 using namespace std;
 //all the attributes of observers
 typedef	struct{
@@ -18,7 +19,8 @@ public:
 	Observer();
 	Observer(Observer *cob1, Observer *cob2);
 	Observer(Observer *cob);
-	bool is_new_event();
+	bool is_new_event_1();
+	bool is_new_event_2();
 	void copy_new_event();
 	virtual void run(){};
 	virtual void check_new_event(int){};
@@ -31,7 +33,6 @@ public:
 	en out_node;//output of this observer
 	en last_node_1;//store child_observer_1's output
 	en last_node_2;//store child_observer_2's output
-
 protected:
 	Observer *child_observer_1;
 	Observer *child_observer_2;
@@ -44,11 +45,13 @@ public:
 	Observer_type_1(Observer *cob):Observer(cob){}
 //override
 	void run(){//child_node_1.out_node
-		if(is_new_event()){
+		if(is_new_event_1()){
 			//update out_node
 			int new_ver=(child_observer_1->out_node.verdict)==1?0:1;//type maybe not included
 			copy_en(out_node,child_observer_1->out_node.time,new_ver,child_observer_1->out_node.time_stamp);
 			copy_new_event();
+		}else{
+			copy_en(out_node,0,-1,-1);
 		}
 	}
 };
@@ -56,38 +59,67 @@ public:
 class Observer_type_2 : public Observer{
 public:
 	~Observer_type_2(){}
-	Observer_type_2(Observer *cob, int tau):Observer(cob),tau(tau){
-		a=0;
-		b=0;
-		copy_en(temp_en,-1,0,0);
-	}
+	Observer_type_2(Observer *cob, int tau):Observer(cob),tau(tau),counter(0){}
 	void run(){
-		if(is_new_event()){
-			copy_en(temp_en,child_observer_1->out_node);
-			a=is_positive_edge_occur(last_node_1,child_observer_1->out_node)?b:a;
-			b=child_observer_1->out_node.time_stamp+1;
-			//cout<<a<<","<<b<<endl;
-			if(temp_en.verdict==0){//if holds
-				if(a<=temp_en.time_stamp-tau)
-					temp_en.time_stamp-=tau;
+		if(is_new_event_1()){
+			if(child_observer_1->out_node.verdict==0){
+				if(counter>=tau)//output true
+					copy_en(out_node,-1,0,child_observer_1->out_node.time_stamp-tau);
+				else//output waiting
+					copy_en(out_node,-1,-1,-1);
+				counter++;
+			}else{//output false
+				counter=0;
+				copy_en(out_node,-1,1,child_observer_1->out_node.time_stamp);
 			}
-			copy_en(out_node,temp_en);
 			copy_new_event();
+		}
+		else{
+			copy_en(out_node,0,-1,-1);
 		}
 	}
 private:
-	int a,b,tau;
-	en temp_en;
+	int tau,counter;
 };
 
 //TODO
 class Observer_type_3 : public Observer{
 public:
+	~Observer_type_3(){}
 	Observer_type_3(Observer *cob1, Observer *cob2):Observer(cob1,cob2){}
 	void run(){
+		if(is_new_event_1()){
+			q1.push_back(child_observer_1->out_node);
+		}
+		if(is_new_event_2()){
+			q2.push_back(child_observer_2->out_node);
+		}
 
+		if(q1.empty()||q2.empty())
+		{
+			copy_en(out_node,0,-1,-1);
+		}else{
+			if(!q1.empty()&&!q2.empty()){
+				en a=q1.front();
+				en b=q2.front();
+				q1.pop_front();
+				q2.pop_front();
+				if(a.verdict==0&&b.verdict==0) copy_en(out_node,0,0,a.time_stamp);
+				else copy_en(out_node,0,1,a.time_stamp);
+				if(a.time_stamp<=b.time_stamp){
+					q1.clear();
+				}else if(a.time_stamp>=b.time_stamp){
+					q2.clear();
+				}
+			}else{
+				copy_en(out_node,-1,-1,-1);
+			}
+		}
 	}
+private:
+	list<en> q1,q2;
 };
+
 //TODO
 class Observer_type_4 : public Observer{
 public:

@@ -6,33 +6,29 @@ using namespace std;
 Observer::Observer():child_observer_1(NULL),child_observer_2(NULL){};
 
 Observer::Observer(Observer *cob1, Observer *cob2):child_observer_1(cob1),child_observer_2(cob2){
-	last_node_1.time=-1;
-	last_node_1.verdict=2;
-	last_node_1.time_stamp=-1;
+	copy_en(last_node_1,-1,2,-1);
+	copy_en(out_node,-1,2,-1);
 }
 
 /*constructor for bottom layer observer*/
 Observer::Observer(Observer *cob):child_observer_1(cob),child_observer_2(NULL){
 	child_observer_1=cob;
-	//last_node_1={-1,0,-1};//not support
-	last_node_1.time=-1;
-	last_node_1.verdict=2;
-	last_node_1.time_stamp=-1;
+	copy_en(last_node_1,-1,2,-1);
+	copy_en(out_node,-1,2,-1);
 }
 
 
-bool Observer::is_new_event(){//check new input
-	return last_node_1.verdict!=child_observer_1->out_node.verdict || \
-			last_node_1.time_stamp!=child_observer_1->out_node.time_stamp;
+bool Observer::is_new_event_1(){//check new input
+	return child_observer_1->out_node.verdict!=-1;
 }
+bool Observer::is_new_event_2(){//check new input
+	return child_observer_1->out_node.verdict!=-1;
+}
+
 
 void Observer::copy_new_event(){//update last_node
 	copy_en(last_node_1,child_observer_1->out_node);
-	/*
-	last_node_2.time=child_observer_2->out_node.time;
-	last_node_2.verdict=child_observer_2->out_node.verdict;
-	last_node_2.time_stamp=child_observer_2->out_node.time_stamp;
-	*/
+	//copy_en(last_node_2,child_observer_2->out_node);
 }
 
 bool Observer::is_positive_edge_occur(en pre, en pos){
@@ -59,7 +55,8 @@ void copy_en(en &a,en &b){
 
 string verdict_interprete(int num){
 	switch(num){
-		case 0: return "TRUE";
+		case -1: return "_____";
+ 		case 0: return "TRUE ";
 		case 1: return "FALSE";
 		case 2: return "MAYBE";
 		default: return "ERROR";
