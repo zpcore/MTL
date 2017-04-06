@@ -3,7 +3,7 @@
 // Author      : 
 // Version     :
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description : MTL formula verification
 //============================================================================
 
 #include <iostream>
@@ -12,32 +12,35 @@
 
 using namespace std;
 
-
-
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
-	Observer* e1 = new Event("e1.log");
-	Observer* Ob1 = new Observer_type_1(e1);
-	Observer* ROOT=Ob1;//point to root observer
-	cout << Ob1->last_node_1.time_stamp<<endl;
-	for(int i=0;i<10;i++){//simulate at each IMU i, the event happens
+	int num_sensor=1;
+	int num_observer=2;
+	int tot_IMU=20;//time length to do the simulation
+
+	Observer** sensor=new Observer*[num_sensor];
+	sensor[0]=new Event("e1.log");
+	//sensor[1]=new Event("e2.log");
+	Observer** observer=new Observer*[num_observer];
+	observer[0] = new Observer_type_1(sensor[0]);
+	observer[1] = new Observer_type_2(observer[0],4);
+	Observer* ROOT=observer[1];//pointer to root observer
+	for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 	//MUST follow the update sequence from bottom layer to top layer
-
 		/*EVENT UPDATE*/
-		e1->check_new_event(i);
+		sensor[0]->check_new_event(i);
 		/*OBSERVER UPDATE*/
-
-		Ob1->run();
+		observer[0]->run();
+//		cout<<"MTL RESULT:@time " <<i<<"	ver: " << verdict_interprete(observer[0]->out_node.verdict)\
+//					<<"	time stamp:"<<observer[0]->out_node.time_stamp<<endl;
+		observer[1]->run();
 
 		/*ROOT OUTPUT UPDATE*/
-		if(Ob1->is_new_event()){
-		cout<<"MTL RESULT:"<<"ver: " << verdict_interprete(ROOT->out_node.verdict)\
-			<<";	time stamp:"<<ROOT->out_node.time_stamp<<endl;
-		}
+		cout<<"MTL RESULT:@time " <<i<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
+			<<"	time stamp:"<<ROOT->out_node.time_stamp<<endl;
 	}
 
-
-	delete e1;
-	delete Ob1;
+	delete[] sensor;
+	delete[] observer;
+	delete ROOT;
 	return 0;
 }
