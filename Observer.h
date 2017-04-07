@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <list>
+#include <unordered_map>
 using namespace std;
 //all the attributes of observers
 typedef	struct{
@@ -120,13 +121,35 @@ private:
 	list<en> q1,q2;
 };
 
-//TODO
 class Observer_type_4 : public Observer{
 public:
-	Observer_type_4(Observer *cob):Observer(cob){}
+	~Observer_type_4(){}
+	Observer_type_4(Observer *cob, int tau1, int tau2):Observer(cob),tau1(tau1),tau2(tau2),counter(0){}
 	void run(){
-
+		if(is_new_event_1()){
+			int tau=tau2-tau1;
+			int new_time_stamp=0;
+			if(child_observer_1->out_node.verdict==0){
+				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau-tau1)>0)//output true
+					copy_en(out_node,-1,0,new_time_stamp);
+				else//output waiting
+					copy_en(out_node,-1,-1,-1);
+				counter++;
+			}else{//output false
+				counter=0;
+				if((new_time_stamp=child_observer_1->out_node.time_stamp-tau1)<0)
+					copy_en(out_node,-1,-1,-1);
+				else
+					copy_en(out_node,-1,1,new_time_stamp);
+			}
+			copy_new_event();
+		}
+		else{
+			copy_en(out_node,0,-1,-1);
+		}
 	}
+private:
+	int tau1,tau2,counter;
 };
 //TODO
 class Observer_type_5 : public Observer{};
