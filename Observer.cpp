@@ -22,9 +22,8 @@ bool Observer::is_new_event_1(){//check new input
 	return child_observer_1->out_node.verdict!=-1;
 }
 bool Observer::is_new_event_2(){//check new input
-	return child_observer_1->out_node.verdict!=-1;
+	return child_observer_2->out_node.verdict!=-1;
 }
-
 
 void Observer::copy_new_event(){//update last_node
 	copy_en(last_node_1,child_observer_1->out_node);
@@ -32,11 +31,11 @@ void Observer::copy_new_event(){//update last_node
 }
 
 bool Observer::is_positive_edge_occur(en pre, en pos){
-	return pos.time_stamp==1&&pre.time_stamp==0;
+	return pos.verdict==1&&pre.verdict==0;
 }
 
 bool Observer::is_negative_edge_occur(en pre, en pos){
-	return pre.time_stamp==1&&pos.time_stamp==0;
+	return pre.verdict==1&&pos.verdict==0;
 }
 
 
@@ -56,8 +55,8 @@ void copy_en(en &a,en &b){
 string verdict_interprete(int num){
 	switch(num){
 		case -1: return "_____";
- 		case 0: return "TRUE ";
-		case 1: return "FALSE";
+ 		case 0: return "FALSE";
+		case 1: return "TRUE ";
 		case 2: return "MAYBE";
 		default: return "ERROR";
 	}

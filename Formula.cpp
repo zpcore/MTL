@@ -19,6 +19,7 @@ using namespace std;
 //constructor
 Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 	delSpaces(s);
+	for (auto & c: s) c = toupper(c);
 	stack<seg_t> s1;
 	unordered_map<int, vector<seg_t> > hm;//an operator at most has two children, use the hashmap to find the children; positive means observer, negative means sensor
 	int observer_label=0;
@@ -73,12 +74,10 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 				else observer[ob.label]=new Observer_type_1(observer[hm[s1.size()+1].at(0).label]);
 				break;
 			case KEP:
-				cout<<"KEP"<<endl;
 				if(hm[s1.size()+1].at(0).op==SEN) observer[ob.label]=new Observer_type_2(sensor[hm[s1.size()+1].at(0).label],ob.interval.ed);
 				else observer[ob.label]=new Observer_type_2(observer[hm[s1.size()+1].at(0).label],ob.interval.ed);
 				break;
 			case AND:
-				cout<<"AND"<<endl;
 				if(hm[s1.size()+1].at(0).op==SEN){
 					if(hm[s1.size()+1].at(1).op==SEN) observer[ob.label]=new Observer_type_3(sensor[hm[s1.size()+1].at(0).label],sensor[hm[s1.size()+1].at(1).label]);
 					else observer[ob.label]=new Observer_type_3(sensor[hm[s1.size()+1].at(0).label],observer[hm[s1.size()+1].at(1).label]);

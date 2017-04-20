@@ -22,21 +22,23 @@ using namespace std;
 
 int main() {
 ////MTL setup
-	//string formula="ALW[5,10]{AND{NOT{S[0]},NOT{S[1]}}}";
-	string formula="ALW[5,1 0]{NO T{S[0]}}";
-	int num_sensor=1;
+	string formula="AND{S[1],KEP[5]{S[0]}}";
+	//string formula="KEP[5]{NOT{NOT{S[0]}}}";
+	//string formula="AND{S[0],S[1]}";
+	int num_sensor=2;
 	int tot_IMU=31;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];
 	sensor[0]=new Event("./src/alt.log");
-	//sensor[1]=new Event("./src/pitch.log");
+	sensor[1]=new Event("./src/pitch.log");
 //************************************************************
 
 //Don't touch the following code
 	int num_observer=0;
-	for(const char& c:formula) num_observer=c=='{'?num_observer+1:num_observer;//compute the total number of observers required
+	for(const char& c:formula) num_observer=c=='{'?num_observer+1:num_observer;//auto compute the total number of observers required
+	cout<<"Number of Observer: "<<num_observer<<endl;
 	Observer** observer=new Observer*[num_observer];
 	Formula f=Formula(formula,sensor,observer);
-	Observer* ROOT=observer[0];//pointer to root observer
+	Observer* ROOT=num_observer==0?sensor[0]:observer[0];//pointer to root observer/sensor
 	for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 	//MUST follow the update sequence from bottom layer to top layer (no need to care)
 		/*EVENT UPDATE*/

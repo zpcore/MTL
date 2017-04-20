@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <list>
-#include <unordered_map>
+
 using namespace std;
 //all the attributes of observers
 typedef	struct{
@@ -63,15 +63,15 @@ public:
 	Observer_type_2(Observer *cob, int tau):Observer(cob),tau(tau),counter(0){}
 	void run(){
 		if(is_new_event_1()){
-			if(child_observer_1->out_node.verdict==0){
+			if(child_observer_1->out_node.verdict==1){
 				if(counter>=tau)//output true
-					copy_en(out_node,-1,0,child_observer_1->out_node.time_stamp-tau);
+					copy_en(out_node,-1,1,child_observer_1->out_node.time_stamp-tau);
 				else//output waiting
 					copy_en(out_node,-1,-1,-1);
 				counter++;
 			}else{//output false
 				counter=0;
-				copy_en(out_node,-1,1,child_observer_1->out_node.time_stamp);
+				copy_en(out_node,-1,0,child_observer_1->out_node.time_stamp);
 			}
 			copy_new_event();
 		}
@@ -83,7 +83,7 @@ private:
 	int tau,counter;
 };
 
-//TODO and INCORRECT!!
+//TODO need check!!
 class Observer_type_3 : public Observer{
 public:
 	~Observer_type_3(){}
@@ -95,25 +95,46 @@ public:
 		if(is_new_event_2()){
 			q2.push_back(child_observer_2->out_node);
 		}
-
-		if(q1.empty()||q2.empty())
-		{
-			copy_en(out_node,0,-1,-1);
-		}else{
-			if(!q1.empty()&&!q2.empty()){
-				en a=q1.front();
-				en b=q2.front();
-				q1.pop_front();
-				q2.pop_front();
-				if(a.verdict==0&&b.verdict==0) copy_en(out_node,0,0,a.time_stamp);
-				else copy_en(out_node,0,1,a.time_stamp);
-				if(a.time_stamp<=b.time_stamp){
-					q1.clear();
-				}else if(a.time_stamp>=b.time_stamp){
-					q2.clear();
+		if(q1.empty()&&q2.empty()){
+			copy_en(out_node,-1,-1,-1);//keep waiting
+		}else if(q1.empty()&&!q2.empty()){//q2 has element
+			copy_en(out_node,-1,-1,-1);//keep waiting
+		}else if(!q1.empty()&&q2.empty()){//q1 has element
+			copy_en(out_node,-1,-1,-1);//keep waiting
+		}else{//q1,q2 both have element, search through the queue to find the match time stamp
+			en a=q1.front();
+			en b=q2.front();
+			q1.pop_front();
+			q2.pop_front();
+			if(a.time_stamp>b.time_stamp){//dequeue q2
+				while(a.time_stamp>b.time_stamp&&!q2.empty()){
+					q2.pop_front();
+					b=q2.front();
+				}
+				if(a.time_stamp==b.time_stamp){
+					if(a.verdict==1&&b.verdict==1) copy_en(out_node,-1,1,a.time_stamp);
+					else copy_en(out_node,-1,0,a.time_stamp);
+				}else{//time stamp in q1 and q2 cannot match, keep waiting
+					if(!q2.empty()) q2.push_back(b);//the last element in q2 maybe useful in the future
+					else q1.push_back(a);//a maybe useful in the future. So push it back
+					copy_en(out_node,-1,-1,-1);
+				}
+			}else if(a.time_stamp<b.time_stamp){//dequeue q1
+				while(a.time_stamp<b.time_stamp&&!q1.empty()){
+					q1.pop_front();
+					a=q1.front();
+				}
+				if(a.time_stamp==b.time_stamp){
+					if(a.verdict==1&&b.verdict==1) copy_en(out_node,-1,1,a.time_stamp);
+					else copy_en(out_node,-1,0,a.time_stamp);
+				}else{//time stamp in q1 and q2 cannot match, keep waiting
+					if(!q1.empty()) q1.push_back(a);//the last element in q2 maybe useful in the future
+					else q2.push_back(b);//a maybe useful in the future. So push it back
+					copy_en(out_node,-1,-1,-1);
 				}
 			}else{
-				copy_en(out_node,-1,-1,-1);
+				if(a.verdict==1&&b.verdict==1) copy_en(out_node,-1,1,a.time_stamp);
+				else copy_en(out_node,-1,0,a.time_stamp);
 			}
 		}
 	}
@@ -129,9 +150,9 @@ public:
 		if(is_new_event_1()){
 			int tau=tau2-tau1;
 			int new_time_stamp=0;
-			if(child_observer_1->out_node.verdict==0){
+			if(child_observer_1->out_node.verdict==1){
 				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau-tau1)>0)//output true
-					copy_en(out_node,-1,0,new_time_stamp);
+					copy_en(out_node,-1,1,new_time_stamp);
 				else//output waiting
 					copy_en(out_node,-1,-1,-1);
 				counter++;
@@ -140,7 +161,7 @@ public:
 				if((new_time_stamp=child_observer_1->out_node.time_stamp-tau1)<0)
 					copy_en(out_node,-1,-1,-1);
 				else
-					copy_en(out_node,-1,1,new_time_stamp);
+					copy_en(out_node,-1,0,new_time_stamp);
 			}
 			copy_new_event();
 		}
