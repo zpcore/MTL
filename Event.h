@@ -4,9 +4,8 @@
 #include <list>
 #include <string>
 #include "Observer.h"
+
 using namespace std;
-
-
 
 class Event: public Observer{
 

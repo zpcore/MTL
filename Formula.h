@@ -3,11 +3,11 @@
 --Sensor: @S[0],@S[1]...
 --Operator:
 	not->NOT{} //algorithm 1
-	keep->KEEP[lb]{} //algorithm 2 !!!check the interval!!!
+	keep->KEEP[0,ub]{} //algorithm 2 !!!check the interval!!!
 	and->AND{,} //algorithm 3
-	always->ALW[lb,up]{} //algorithm 4
+	always->ALW[lb,ub]{} //algorithm 4
 	until->UNT[lb,ub]{,} //algorithm 5
-	release->REL[lb,ub]{,} //algorithm ??
+	release->REL[lb,ub]{,} //algorithm 6 (Not mentioned in the paper)
 --MTL Example:
 	NOT{S[0]}
 	{S[0]}AND{S[1]}
@@ -16,6 +16,7 @@
 #pragma once
 
 #include <iostream>
+#include "Observer.h"
 using namespace std;
 
 typedef struct{
@@ -32,6 +33,7 @@ typedef	struct{
 }seg_t;
 
 class Formula{
+//class method
 public:
 	Formula(string,Observer**,Observer**);
 	~Formula(){};
@@ -40,6 +42,7 @@ private:
 	interval_t get_interval(int pos);
 	string delSpaces(string &);
 	int read_sensor_num(int pos);
-public:
+//class variable
+private:
 	string s;
 };
