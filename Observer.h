@@ -83,7 +83,7 @@ private:
 	int tau,counter;
 };
 
-//TODO
+//TODO and INCORRECT!!
 class Observer_type_3 : public Observer{
 public:
 	~Observer_type_3(){}
@@ -151,6 +151,10 @@ public:
 private:
 	int tau1,tau2,counter;
 };
-//TODO
+
+//TODO until
 class Observer_type_5 : public Observer{};
+
+//TODO release
+class Observer_type_6 : public Observer{};
 

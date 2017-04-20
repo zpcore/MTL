@@ -9,18 +9,20 @@
 #include <iostream>
 #include "Event.h"
 #include "Observer.h"
+#include "Formula.h"
 
 using namespace std;
 
 int main() {
+	string formula="ALW[5,10]{AND{NOT{S[0]},NOT{S[1]}}}";
 	int num_sensor=2;
 	int num_observer=4;
 	int tot_IMU=31;//time length to do the simulation
-
 	Observer** sensor=new Observer*[num_sensor];
 	sensor[0]=new Event("./src/alt.log");
 	sensor[1]=new Event("./src/pitch.log");
 	Observer** observer=new Observer*[num_observer];
+	Formula f=Formula(formula,sensor,observer);
 	observer[0] = new Observer_type_1(sensor[0]);
 	observer[1] = new Observer_type_1(sensor[1]);
 	observer[2] = new Observer_type_4(observer[0],5,10);
