@@ -83,7 +83,9 @@ private:
 	int tau,counter;
 };
 
-//TODO need check!!
+
+//TODO version 1 need check!!
+
 class Observer_type_3 : public Observer{
 public:
 	~Observer_type_3(){}
@@ -141,6 +143,170 @@ public:
 private:
 	list<en> q1,q2;
 };
+
+/*
+//TODO version 2 need check!!!
+//This version follows with my hardware implementation
+class Observer_type_3 : public Observer{
+public:
+	~Observer_type_3(){}
+	Observer_type_3(Observer *cob1, Observer *cob2):Observer(cob1,cob2){}
+	void run(){
+		if(status.qfor==empty){
+			if(is_new_event_1()&&is_new_event_2()){
+				op1 = child_observer_1->out_node;
+				op2 = child_observer_1->out_node;
+				if(op1.time_stamp==op2.time_stamp){
+					copy_en(out_node,-1,op1.verdict&op2.verdict,op1.time_stamp);
+				}else if(op1.time_stamp>op2.time_stamp) {
+					q.push_back(op1);
+					status.qfor=Q1;
+					//status.numOfTrueRemain=op1.verdict==1?status.numOfTrueRemain+1:status.numOfTrueRemain;
+					if(op2.verdict==0) copy_en(out_node,-1,0,op2.time_stamp);
+					else copy_en(out_node,-1,-1,-1);
+				}else{
+					q.push_back(op2);
+					status.qfor=Q2;
+					//status.numOfTrueRemain=op2.verdict==1?status.numOfTrueRemain+1:status.numOfTrueRemain;
+					if(op1.verdict==0) copy_en(out_node,-1,0,op1.time_stamp);
+					else copy_en(out_node,-1,-1,-1);
+				}
+			}else if(is_new_event_1()){
+				op1 = child_observer_1->out_node;
+				if(op1.verdict==1) {
+					q.push_back(op1);
+					status.qfor=Q1;
+					//status.numOfTrueRemain=op1.verdict==1?status.numOfTrueRemain+1:status.numOfTrueRemain;
+					copy_en(out_node,-1,-1,-1);
+				}
+				else{
+					copy_en(out_node,-1,0,op1.time_stamp);
+				}
+			}else if(is_new_event_2()){
+				op2 = child_observer_2->out_node;
+				if(op2.verdict==1) {
+					q.push_back(op2);
+					status.qfor=Q2;
+					//status.numOfTrueRemain=op2.verdict==1?status.numOfTrueRemain+1:status.numOfTrueRemain;
+					copy_en(out_node,-1,-1,-1);
+				}
+				else{
+					copy_en(out_node,-1,0,op2.time_stamp);
+				}
+			}
+		}else if(status.qfor==Q1){
+			if(is_new_event_2()){
+				if(is_new_event_1()) q.push_back(child_observer_1->out_node);
+				op2 = child_observer_2->out_node;
+				while(!q.empty()){
+					if(q.front().time_stamp<op2.time_stamp){
+						q.pop_front();
+					}
+				}
+				if(!q.empty()){
+					if(q.front().time_stamp==op2.time_stamp){
+						copy_en(out_node,-1,q.front().verdict&op2.verdict,op2.time_stamp);
+					}else{//q.front().time_stamp > op2.time_stamp
+						while(!q.empty()&&q.front().verdict==0){//dequeue
+							lastEn=q.front();
+							q.pop_front();
+						}
+						if(q.empty()){
+							if(lastEn.verdict==1) q.push_back(lastEn);
+							else{
+								copy_en(out_node,lastEn);
+								status.qfor=empty;
+							}
+						}
+					}
+				}else{//all en in q with time_stamp < op2
+					if(op2.verdict==1){
+						q.push_back(op2);
+						status.qfor=Q2;
+					}else{
+						copy_en(out_node,op2);
+						status.qfor=empty;
+					}
+				}
+			}else if(is_new_event_1()){
+				op1 = child_observer_1->out_node;
+				q.push_back(op1);
+				while(!q.empty()&&q.front().verdict==0){
+					lastEn=q.front();
+					q.pop_front();
+				}
+				if(q.empty()){
+					if(lastEn.verdict==0){
+						copy_en(out_node,lastEn);
+						status.qfor=empty;
+					}else{//dequeue process blocked by a true verdict
+						copy_en(out_node,-1,-1,-1);//should I output the node before lastEn??
+					}
+				}
+			}
+		}else{//status.qfor==Q2
+			if(is_new_event_1()){
+				if(is_new_event_2()) q.push_back(child_observer_2->out_node);
+				op1 = child_observer_1->out_node;
+				while(!q.empty()){
+					if(q.front().time_stamp<op1.time_stamp){
+						q.pop_front();
+					}
+				}
+				if(!q.empty()){
+					if(q.front().time_stamp==op1.time_stamp){
+						copy_en(out_node,-1,q.front().verdict&op1.verdict,op1.time_stamp);
+					}else{//q.front().time_stamp > op2.time_stamp
+						while(!q.empty()&&q.front().verdict==0){//dequeue
+							lastEn=q.front();
+							q.pop_front();
+						}
+						if(q.empty()){
+							if(lastEn.verdict==1) q.push_back(lastEn);
+							else{
+								copy_en(out_node,lastEn);
+								status.qfor=empty;
+							}
+						}
+					}
+				}else{//all en in q with time_stamp < op2
+					if(op1.verdict==1){
+						q.push_back(op1);
+						status.qfor=Q1;
+					}else{
+						copy_en(out_node,op1);
+						status.qfor=empty;
+					}
+				}
+			}else if(is_new_event_2()){
+				op2 = child_observer_2->out_node;
+				q.push_back(op2);
+				while(!q.empty()&&q.front().verdict==0){
+					lastEn=q.front();
+					q.pop_front();
+				}
+				if(q.empty()){
+					if(lastEn.verdict==0){
+						copy_en(out_node,lastEn);
+						status.qfor=empty;
+					}else{//dequeue process blocked by a true verdict
+						copy_en(out_node,-1,-1,-1);//should I output the node before lastEn??
+					}
+				}
+			}
+		}
+	}
+private:
+	en op1,op2,lastEn;
+	list<en> q;
+	enum qFor {Q1,Q2,empty};
+	struct{
+		int numOfTrueRemain=0;
+		qFor qfor=empty;
+	}status;
+};
+
+*/
 
 class Observer_type_4 : public Observer{
 public:

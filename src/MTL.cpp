@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : MTL.cpp
-// Author      : 
-// Version     :
+// Author      : Pei Zhang
+// Version     : 1.0.0
 // Copyright   : Your copyright notice
 // Description : Main function for MTL formula verification
 //============================================================================
