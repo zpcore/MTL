@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : MTL.cpp
 // Author      : Pei Zhang
-// Version     : 1.0.0
+// Version     : 1.0.1
 // Copyright   : Your copyright notice
 // Description : Main function for MTL formula verification
 //============================================================================
@@ -22,9 +22,11 @@ using namespace std;
 
 int main() {
 ////MTL setup
+	//string formula="ALW[5,10]{S[0]}";
 	string formula="AND{S[1],KEP[5]{S[0]}}";
 	//string formula="KEP[5]{NOT{NOT{S[0]}}}";
 	//string formula="AND{S[0],S[1]}";
+	//string formula="KEP[5]{S[1]}";
 	int num_sensor=2;
 	int tot_IMU=31;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];
@@ -46,8 +48,8 @@ int main() {
 		/*OBSERVER UPDATE*/
 		for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run();
 		/*ROOT OUTPUT UPDATE*/
-		cout<<"MTL RESULT:@time " <<i<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
-					<<"	time stamp:"<<ROOT->out_node.time_stamp<<endl;
+		cout<<"MTL RESULT:@time " <<i+1<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
+					<<"	time stamp:"<<ROOT->out_node.time_stamp+1<<endl;
 	}
 	delete[] sensor;
 	delete[] observer;

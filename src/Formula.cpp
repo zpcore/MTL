@@ -1,3 +1,9 @@
+//============================================================================
+// Name        : Formula.cpp
+// Author      : Pei Zhang
+// Institution : Iowa State University
+// Description : Compiler for MTL formula
+//============================================================================
 /*
  Stack Data format:
  {SEN,sensor_label,{-1,-1}}
