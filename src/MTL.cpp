@@ -41,6 +41,7 @@ int main() {
 	Observer** observer=new Observer*[num_observer];
 	Formula f=Formula(formula,sensor,observer);
 	Observer* ROOT=num_observer==0?sensor[0]:observer[0];//pointer to root observer/sensor
+	cout<<"MTL Formula: "<<formula<<endl<<"-------------------"<<endl;
 	for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 	//MUST follow the update sequence from bottom layer to top layer (no need to care)
 		/*EVENT UPDATE*/
@@ -48,8 +49,8 @@ int main() {
 		/*OBSERVER UPDATE*/
 		for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run();
 		/*ROOT OUTPUT UPDATE*/
-		cout<<"MTL RESULT:@time " <<i+1<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
-					<<"	time stamp:"<<ROOT->out_node.time_stamp+1<<endl;
+		cout<<"MTL RESULT:@time " <<i<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
+					<<"	time stamp:"<<ROOT->out_node.time_stamp<<endl;
 	}
 	delete[] sensor;
 	delete[] observer;
