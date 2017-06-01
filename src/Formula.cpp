@@ -32,6 +32,7 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 	op_t op=ERR;
 	interval_t interval;
 	int i=0;
+	sensor_tag=-1;
 	while(i<s.length()){
 		//char c=s.at(i);
 		if(s.at(i)==','){
@@ -74,6 +75,7 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 			hm[s1.size()].push_back(ob);
 			switch(ob.op){
 			case SEN:
+				sensor_tag=ob.label;
 				break;
 			case NOT:
 				if(hm[s1.size()+1].at(0).op==SEN) {observer[ob.label]=new Observer_type_1(sensor[hm[s1.size()+1].at(0).label]);}
@@ -113,6 +115,7 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 			s1.pop();//remove that operator
 		}
 	}
+
 }
 
 int Formula::read_sensor_num(int pos){

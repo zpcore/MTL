@@ -43,6 +43,8 @@ private:
 	string delSpaces(string &);
 	int read_sensor_num(int pos);
 //class variable
+public:
+	int sensor_tag;//useful when only one sensor exist;
 private:
 	string s;
 };
