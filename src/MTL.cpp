@@ -24,11 +24,12 @@ int main() {
 ////MTL setup
 	//string formula="NOT{NOT{NOT{S[0]}}}";
 	//string formula="ALW[5,10]{S[0]}";
-	string formula="AND{S[1],KEP[5]{S[0]}}";
+	string formula="AND{KEP[2]{S[0]},S[1]}";
+	//string formula="AND{S[0],KEP[2]{S[1]}}";
 	//string formula="S[1]";
 	//string formula="KEP[5]{NOT{NOT{S[0]}}}";
 	//string formula="AND{S[0],S[1]}";
-	//string formula="KEP[5]{S[0]}";
+	//string formula="KEP[2]{S[1]}";
 	int num_sensor=2;
 	int tot_IMU=31;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];

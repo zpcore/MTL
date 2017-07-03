@@ -226,7 +226,7 @@ private:
 class Observer_type_3 : public Observer{
 public:
 	~Observer_type_3(){}
-	Observer_type_3(Observer *cob1, Observer *cob2):Observer(cob1,cob2){bound_q1=-1;bound_q2=-1;}
+	Observer_type_3(Observer *cob1, Observer *cob2):Observer(cob1,cob2){tau=-1;}
 	void run(){
 		//aggregation
 		if(is_new_event_1()){
@@ -240,8 +240,8 @@ public:
 		copy_en(out_node,-1,-1,-1);
 		if(!q1.empty()&&!q2.empty()){
 			if(q1.front().verdict==1&&q2.front().verdict==1){
-				if((q1.front().time_stamp<q2.front().time_stamp&&bound_q2<q1.front().time_stamp)||\
-						(q2.front().time_stamp<=q1.front().time_stamp&&bound_q1<q2.front().time_stamp)){//additional condition
+				if((q1.front().time_stamp<q2.front().time_stamp&&tau<q1.front().time_stamp)||\
+						(q2.front().time_stamp<=q1.front().time_stamp&&tau<q2.front().time_stamp)){//additional condition
 					copy_en(out_node,-1,1,min(q1.front().time_stamp,q2.front().time_stamp));
 				}
 			}
@@ -264,19 +264,20 @@ public:
 				copy_en(out_node,-1,0,q1.front().time_stamp);
 			}
 		}
+		if(out_node.time_stamp!=-1) tau=out_node.time_stamp;
 		//deque operation
 		while(!q1.empty() && out_node.time_stamp!=-1 && q1.front().time_stamp<=out_node.time_stamp) {
-			bound_q1=q1.front().time_stamp;
+			//bound_q1=q1.front().time_stamp;
 			q1.pop_front();
 		}
 		while(!q2.empty() && out_node.time_stamp!=-1 && q2.front().time_stamp<=out_node.time_stamp) {
-			bound_q2=q2.front().time_stamp;
+			//bound_q2=q2.front().time_stamp;
 			q2.pop_front();
 		}
 	}
 private:
 	list<en> q1,q2;
-	int bound_q1,bound_q2;
+	int tau;
 };
 
 
