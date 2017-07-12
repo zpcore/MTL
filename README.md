@@ -16,10 +16,10 @@
 
 ---
 ## Notes:
-###Meaning the MTL String:
-###Relationship with TACAS14--->
-####Algorithm 1: "!" = "NOT{}"
-####Algorithm 2: "G[2]" = "KEP[2]{}"
-####Algorithm 3: "&" = "AND{,}"
-####Algorithm 4: "G[2,5]" = "ALW[2,5]{}"
-####Algorithm 5: "F[1,2]" = "UNT[1,2]{,}"
+### Meaning the MTL String:
+### Relationship with TACAS14--->
+#### Algorithm 1: "!" = "NOT{}"
+#### Algorithm 2: "G[2]" = "KEP[2]{}"
+#### Algorithm 3: "&" = "AND{,}"
+#### Algorithm 4: "G[2,5]" = "ALW[2,5]{}"
+#### Algorithm 5: "F[1,2]" = "UNT[1,2]{,}"
