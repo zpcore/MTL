@@ -167,7 +167,7 @@ public:
 			int tau=tau2-tau1;
 			int new_time_stamp=0;
 			if(child_observer_1->out_node.verdict==1){
-				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau-tau1)>0)//output true
+				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau2)>=0)//output true
 					copy_en(out_node,-1,1,new_time_stamp);
 				else//output waiting
 					copy_en(out_node,-1,-1,-1);

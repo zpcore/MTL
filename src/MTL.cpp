@@ -22,11 +22,22 @@ using namespace std;
 
 int main() {
 ////MTL setup
+	//string formula="NOT{S[0]}";
+	//string formula="NOT{NOT{S[0]}}";
+	//string formula="KEP[5]{S[1]}";
+	//string formula="NOT{KEP[2]{NOT{S[1]}}}";
+	//string formula="AND{KEP[2]{S[0]},S[1]}";
+	//string formula="ALW[5,10]{S[1]}";
+	//string formula="NOT{AND{ALW[5,10]{S[0]},KEP[2]{S[1]}}}";
+	//string formula="AND{KEP[2]{NOT{NOT{S[0]}}},S[0]}";
+	//string formula="AND{S[1],ALW[0,8]{S[0]}}";
+	//string formula="AND{S[1],KEP[8]{S[0]}}";
 	//string formula="AND{ALW[5,10]{S[0]},KEP[2]{S[1]}}";
-	string formula="AND{S[1],ALW[0,8]{S[0]}}";
-	//string formula="AND{ALW[5,10]{S[0]},KEP[2]{S[1]}}";
+	//string formula="KEP[2]{S[1]}";
+	string formula="AND{AND{S[0],S[1]},ALW[3,5]{S[0]}}";
+
 	int num_sensor=2;
-	int tot_IMU=31;//time length to do the simulation
+	int tot_IMU=39;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];
 	sensor[0]=new Event("./src/alt.log");
 	sensor[1]=new Event("./src/pitch.log");
