@@ -39,16 +39,8 @@ int main() {
 	//string formula="KEP[2]{S[1]}";
 	string formula="AND{AND{S[0],S[1]},ALW[3,5]{S[0]}}";
 
-<<<<<<< HEAD
 	string asm_file="./src/test.ftasm";
 
-=======
-<<<<<<< 244adb7defe3580368cd01727148100f219032ab
-=======
-	string asm_file="./src/test.ftasm";
-
->>>>>>> support both assembly code and high level LTL
->>>>>>> temp
 	int num_sensor=2;
 	int tot_IMU=39;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];
@@ -70,7 +62,6 @@ int main() {
 		Observer** observer=new Observer*[assm.num_of_observer];
 		assm.Construct(sensor, observer);
 		Observer* ROOT=observer[assm.top_ob];//pointer to root observer/sensor
-		//cout<<assm.num_of_observer<<"what"<<endl;
 	#endif
 		for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 		//MUST follow the update sequence from bottom layer to top layer (no need to care)
