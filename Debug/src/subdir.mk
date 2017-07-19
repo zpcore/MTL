@@ -4,18 +4,21 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/Assembly.cpp \
 ../src/Event.cpp \
 ../src/Formula.cpp \
 ../src/MTL.cpp \
 ../src/Observer.cpp 
 
 OBJS += \
+./src/Assembly.o \
 ./src/Event.o \
 ./src/Formula.o \
 ./src/MTL.o \
 ./src/Observer.o 
 
 CPP_DEPS += \
+./src/Assembly.d \
 ./src/Event.d \
 ./src/Formula.d \
 ./src/MTL.d \
