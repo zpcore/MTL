@@ -39,8 +39,16 @@ int main() {
 	//string formula="KEP[2]{S[1]}";
 	string formula="AND{AND{S[0],S[1]},ALW[3,5]{S[0]}}";
 
+<<<<<<< HEAD
 	string asm_file="./src/test.ftasm";
 
+=======
+<<<<<<< 244adb7defe3580368cd01727148100f219032ab
+=======
+	string asm_file="./src/test.ftasm";
+
+>>>>>>> support both assembly code and high level LTL
+>>>>>>> temp
 	int num_sensor=2;
 	int tot_IMU=39;//time length to do the simulation
 	Observer** sensor=new Observer*[num_sensor];
