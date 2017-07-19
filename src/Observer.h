@@ -46,6 +46,25 @@ protected:
 	Observer *child_observer_2;
 };
 
+//LOAD (for assembly only)
+class Observer_type_0 : public Observer{
+public:
+	~Observer_type_0(){}
+//constructor
+	Observer_type_0(Observer *cob):Observer(cob){}
+//override
+	void run(){//child_node_1.out_node
+		if(is_new_event_1()){
+			//update out_node
+			int new_ver=child_observer_1->out_node.verdict;
+			copy_en(out_node,child_observer_1->out_node.time,new_ver,child_observer_1->out_node.time_stamp);
+			copy_new_event();
+		}else{
+			copy_en(out_node,0,-1,-1);
+		}
+	}
+};
+
 
 //NOT
 class Observer_type_1 : public Observer{
@@ -167,7 +186,7 @@ public:
 			int tau=tau2-tau1;
 			int new_time_stamp=0;
 			if(child_observer_1->out_node.verdict==1){
-				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau-tau1)>0)//output true
+				if(counter>=tau&&(new_time_stamp=child_observer_1->out_node.time_stamp-tau2)>=0)//output true
 					copy_en(out_node,-1,1,new_time_stamp);
 				else//output waiting
 					copy_en(out_node,-1,-1,-1);
