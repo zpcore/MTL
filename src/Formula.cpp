@@ -16,7 +16,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "Event.h"
 #include "Observer.h"
 #include "Formula.h"
 
@@ -115,7 +114,6 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 			s1.pop();//remove that operator
 		}
 	}
-
 }
 
 int Formula::read_sensor_num(int pos){

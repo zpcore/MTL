@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : MTL.cpp
 // Author      : Pei Zhang
-// Version     : 1.1.0
+// Version     : 1.2.0
 // Copyright   : Your copyright notice
 // Description : Main function for MTL formula verification
 //============================================================================
@@ -14,11 +14,10 @@
 //============================================================================
 
 #include <iostream>
-#include "Event.h"
 #include "Observer.h"
 #include "Formula.h"
 #include "Assembly.h"
-
+#include "common.h"
 #define ASM_MODE //comment this line if you are using high level MTL formula
 
 using namespace std;
@@ -62,6 +61,7 @@ int main() {
 		Observer** observer=new Observer*[assm.num_of_observer];
 		assm.Construct(sensor, observer);
 		Observer* ROOT=observer[assm.top_ob];//pointer to root observer/sensor
+		//cout<<assm.num_of_observer<<"what"<<endl;
 	#endif
 		for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 		//MUST follow the update sequence from bottom layer to top layer (no need to care)
@@ -70,12 +70,20 @@ int main() {
 			/*OBSERVER UPDATE*/
 			#ifndef ASM_MODE
 			for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run();
-			#else
-			for(int n=0;n<assm.num_of_observer-1;n++) observer[n]->run();
-			#endif
 			/*ROOT OUTPUT UPDATE*/
-			cout<<"MTL RESULT:@time " <<i<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)\
-						<<"	time stamp:"<<ROOT->out_node.time_stamp<<endl;
+			cout<<"MTL RESULT:@RTC " <<i<<"	[time: "<<ROOT->out_node.time_stamp\
+					<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)<<"]"<<endl;
+			cout<<"------------------------------------"<<endl;
+			#else
+			//for(int n=0;n<assm.num_of_observer-1;n++) observer[n]->run();
+			cout<<"----------"<<"TIME STEP: "<<i<<"----------"<<endl;
+			for(int n=0;n<assm.num_of_observer;n++){
+				observer[n]->run();
+				//observer[n]->dprint();
+			}
+			cout<<endl;
+			#endif
+
 		}
 		delete[] sensor;
 		delete[] observer;
