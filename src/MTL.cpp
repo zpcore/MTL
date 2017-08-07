@@ -14,6 +14,7 @@
 //============================================================================
 
 #include <iostream>
+#include <stdio.h>
 #include "Observer.h"
 #include "Formula.h"
 #include "Assembly.h"
@@ -47,18 +48,20 @@ int main() {
 		Observer** observer=new Observer*[assm.num_of_observer];
 		assm.Construct(sensor, observer);
 	#endif
-		cout<<"**********RESULTS**********"<<endl<<endl;
+		FILE * pFile;
+		pFile = fopen ("result.txt","w");
+		fprintf(pFile,"**********RESULTS**********\n\n");
 		for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 		//MUST follow the update sequence from bottom layer to top layer (no need to care)
-			cout<<"----------"<<"TIME STEP: "<<i<<"----------"<<endl;
+			fprintf(pFile,"----------TIME STEP %d----------\n",i);
 			#ifndef ASM_MODE
-				for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run("NODE");
+				for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run(pFile,"NODE");
 			#else
-				for(int n=0;n<assm.num_of_observer;n++) observer[n]->run("PC");
+				for(int n=0;n<assm.num_of_observer;n++) observer[n]->run(pFile,"PC");
 			#endif
-
-			cout<<endl;
+			fprintf(pFile,"\n");
 		}
+		fclose (pFile);
 		delete[] sensor;
 		delete[] observer;
 		return 0;

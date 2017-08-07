@@ -13,7 +13,6 @@
 #include <vector>
 #include "Observer.h"
 
-
 using namespace std;
 Assembly::Assembly(string filename): num_of_observer(0),subformula_tag(0),top_ob(0),filename(filename) {
 	ifstream infile(filename.c_str());

@@ -10,6 +10,7 @@
 #define SRC_OBSERVER_H_
 
 #include <iostream>
+#include <stdio.h>
 #include <list>
 #include <fstream>
 #include <sstream>
@@ -25,18 +26,15 @@ public:
 	Observer();
 	Observer(Observer *cob1, Observer *cob2);
 	Observer(Observer *cob);
-	virtual void run(string){};
+	virtual void run(FILE*,string){};
 	virtual void run(){};
-	virtual void dprint1(string){};
-	virtual void dprint2(string){};
+	virtual void dprint1(FILE*,string){};
+	virtual void dprint2(FILE*,string){};
 	virtual void dprint1(){};
 	virtual void dprint2(){};
 	virtual bool read_buffer(){return false;};
 	virtual ~Observer(){};
 	CircularBuffer *cb=new CircularBuffer();
-//protected:
-//	bool is_positive_edge_occur(en pre,en pos);
-//	bool is_negative_edge_occur(en pre,en pos);
 
 protected:
 	Observer *child_observer_1=0;
@@ -80,14 +78,16 @@ public:
 		read_data=child_observer_1->cb->read(rdPtr);
 		return read_data.time_stamp>last_tau;
 	}
-	void dprint1(string s){
+	void dprint1(FILE* pFile,string s){
 		if(result.time_stamp!=-1){
 			hasPrint=true;
-			cout<<"END "<<s<<":"<<pc<<" = ("<<read_data.verdict<<","<<read_data.time_stamp<<")"<<endl;
+			fprintf(pFile,"END %s:%d = (%d,%d)\n",s.c_str(),pc,read_data.verdict,read_data.time_stamp);
+			//cout<<"END "<<s<<":"<<pc<<" = ("<<read_data.verdict<<","<<read_data.time_stamp<<")"<<endl;
 		}
 	}
-	void dprint2(string s) {if(!hasPrint) cout<<"END "<<s<<":"<<pc<<" = (-,-)"<<endl;}
-	void run(string s){
+	void dprint2(FILE* pFile,string s) {if(!hasPrint) fprintf(pFile,"END %s:%d = (-,-)\n",s.c_str(),pc);}
+	//cout<<"END "<<s<<":"<<pc<<" = (-,-)"<<endl;
+	void run(FILE* pFile,string s){
 		hasPrint=false;
 		result={0,-1};
 		while(!child_observer_1->cb->isEmpty(rdPtr)){
@@ -95,16 +95,16 @@ public:
 				result=read_data;
 				cb->write(result);
 			}
-			dprint1(s);
+			dprint1(pFile,s);
 			rdPtr++;
 			last_tau=result.time_stamp==-1?last_tau:result.time_stamp;
 		}
-		dprint2(s);
+		dprint2(pFile,s);
 		if(child_observer_1->cb->recedPtr(rdPtr)) rdPtr--;
 	}
 };
 
-//LOAD (for assembly only)
+//LOAD
 class Observer_type_0 : public Observer{
 public:
 	~Observer_type_0(){}
@@ -112,11 +112,12 @@ public:
 	Observer_type_0(Observer *cob):Observer(cob){}
 	Observer_type_0(Observer *cob, int pc):Observer(cob),pc(pc){}
 //override
-	void dprint1(string s) {cout<<"LOAD "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;}
-	void run(string s){//child_node_1.out_node
+	void dprint1(FILE* pFile, string s) {fprintf(pFile,"LOAD %s:%d = (%d,%d)\n",s.c_str(),pc,result.verdict,result.time_stamp);}
+	//cout<<"LOAD "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+	void run(FILE* pFile, string s){//child_node_1.out_node
 		result=child_observer_1->cb->read(rdPtr);;
 		cb->write(result);
-		dprint1(s);
+		dprint1(pFile,s);
 	}
 private:
 	int pc=0;
@@ -134,14 +135,16 @@ public:
 		read_data=child_observer_1->cb->read(rdPtr);
 		return read_data.time_stamp>last_tau;
 	}
-	void dprint1(string s){
+	void dprint1(FILE* pFile,string s){
 		if(result.time_stamp!=-1){
 			hasPrint=true;
-			cout<<"NOT "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+			//cout<<"NOT "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+			fprintf(pFile,"NOT %s:%d = (%d,%d)\n",s.c_str(),pc,read_data.verdict,read_data.time_stamp);
 		}
 	}
-	void dprint2(string s) {if(!hasPrint) cout<<"NOT "<<s<<":"<<pc<<" = (-,-)"<<endl;}
-	void run(string s){//child_node_1.out_node
+	void dprint2(FILE* pFile,string s) {if(!hasPrint) fprintf(pFile,"NOT %s:%d = (-,-)\n",s.c_str(),pc);}
+	//cout<<"NOT "<<s<<":"<<pc<<" = (-,-)"<<endl;
+	void run(FILE* pFile,string s){//child_node_1.out_node
 		hasPrint=false;
 		result={0,-1};
 		while(!child_observer_1->cb->isEmpty(rdPtr)){
@@ -149,11 +152,11 @@ public:
 				result={!read_data.verdict,read_data.time_stamp};
 				cb->write(result);
 			}
-			dprint1(s);
+			dprint1(pFile,s);
 			last_tau=result.time_stamp==-1?last_tau:result.time_stamp;
 			rdPtr++;
 		}
-		dprint2(s);
+		dprint2(pFile,s);
 		if(child_observer_1->cb->recedPtr(rdPtr)) rdPtr--;
 	}
 private:
@@ -171,14 +174,16 @@ public:
 		read_data=child_observer_1->cb->read(rdPtr);
 		return read_data.time_stamp>last_tau;
 	}
-	void dprint1(string s){
+	void dprint1(FILE* pFile, string s){
 		if(result.time_stamp!=-1){
 			hasPrint=true;
-			cout<<"G["<<tau<<"] "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+			fprintf(pFile,"G[%d] %s:%d = (%d,%d)\n",tau,s.c_str(),pc,result.verdict,result.time_stamp);
+			//cout<<"G["<<tau<<"] "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
 		}
 	}
-	void dprint2(string s) {if(!hasPrint) cout<<"G["<<tau<<"] "<<s<<":"<<pc<<" = (-,-)"<<endl;}
-	void run(string s){
+	void dprint2(FILE* pFile, string s) {if(!hasPrint) fprintf(pFile,"G[%d] %s:%d = (-,-)\n",tau,s.c_str(),pc);}
+	// cout<<"G["<<tau<<"] "<<s<<":"<<pc<<" = (-,-)"<<endl;
+	void run(FILE* pFile,string s){
 		hasPrint=false;
 		while(true){
 			track={rdPtr,rdPtr2,result};
@@ -201,9 +206,9 @@ public:
 
 			if(child_observer_1->cb->recedPtr(rdPtr)) rdPtr--;
 			if(track.rdPtr_mem==rdPtr&&track.result_mem.time_stamp==result.time_stamp) break;
-			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(s);
+			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(pFile,s);
 		}
-		dprint2(s);
+		dprint2(pFile,s);
 	}
 private:
 	int pc=0,tau,counter=0;
@@ -225,14 +230,16 @@ public:
 		read_data2=child_observer_2->cb->read(rdPtr2);
 		return read_data2.time_stamp>last_tau;
 	}
-	void dprint1(string s){
+	void dprint1(FILE* pFile, string s){
 		if(result.time_stamp!=-1){
 			hasPrint=true;
-			cout<<"AND "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+			fprintf(pFile,"AND %s:%d = (%d,%d)\n",s.c_str(),pc,result.verdict,result.time_stamp);
+			//cout<<"AND "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
 		}
 	}
-	void dprint2(string s) {if(!hasPrint) cout<<"AND "<<s<<":"<<pc<<" = (-,-)"<<endl;}
-	void run(string s){
+	void dprint2(FILE* pFile, string s) {if(!hasPrint) fprintf(pFile,"AND %s:%d = (-,-)\n",s.c_str(),pc);}
+	//cout<<"AND "<<s<<":"<<pc<<" = (-,-)"<<endl;
+	void run(FILE* pFile, string s){
 		result={0,-1};
 		hasPrint=false;
 		while(true){
@@ -271,9 +278,9 @@ public:
 			if(child_observer_1->cb->recedPtr(rdPtr)) rdPtr--;
 			if(child_observer_2->cb->recedPtr(rdPtr2)) rdPtr2--;
 			if(track.rdPtr_mem==rdPtr&&track.rdPtr2_mem==rdPtr2&&track.result_mem.time_stamp==result.time_stamp) break;
-			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(s);
+			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(pFile,s);
 		}
-		dprint2(s);
+		dprint2(pFile,s);
 	}
 private:
 	int pc=0;
@@ -291,14 +298,17 @@ public:
 		read_data=child_observer_1->cb->read(rdPtr);
 		return read_data.time_stamp>last_tau;
 	}
-	void dprint1(string s){
+	void dprint1(FILE* pFile,string s){
 		if(result.time_stamp!=-1){
 			hasPrint=true;
-			cout<<"G["<<tau1<<","<<tau2<<"] "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
+			fprintf(pFile,"G[%d,%d] %s:%d = (%d,%d)\n",tau1,tau2,s.c_str(),pc,result.verdict,result.time_stamp);
+			//cout<<"G["<<tau1<<","<<tau2<<"] "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
 		}
 	}
-	void dprint2(string s){if(!hasPrint) cout<<"G["<<tau1<<","<<tau2<<"] "<<s<<":"<<pc<<" = (-,-)"<<endl;}
-	void run(string s){
+	void dprint2(FILE* pFile,string s){if(!hasPrint) fprintf(pFile,"G[%d,%d] %s:%d = (-,-)\n",tau1,tau2,s.c_str(),pc);}
+	//cout<<"G["<<tau1<<","<<tau2<<"] "<<s<<":"<<pc<<" = (-,-)"<<endl;
+
+	void run(FILE* pFile,string s){
 		int tau=tau2-tau1;
 		hasPrint=false;
 		result={0,-1};
@@ -325,9 +335,9 @@ public:
 			last_tau=read_data.time_stamp;
 			if(child_observer_1->cb->recedPtr(rdPtr)) rdPtr--;
 			if(track.rdPtr_mem==rdPtr&&track.result_mem.time_stamp==result.time_stamp) break;
-			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(s);
+			if(track.result_mem.time_stamp!=result.time_stamp) dprint1(pFile,s);
 		}
-		dprint2(s);
+		dprint2(pFile,s);
 	}
 private:
 	int tau1,tau2,counter=0,pc=0;
