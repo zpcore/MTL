@@ -139,7 +139,7 @@ public:
 		if(result.time_stamp!=-1){
 			hasPrint=true;
 			//cout<<"NOT "<<s<<":"<<pc<<" = ("<<result.verdict<<","<<result.time_stamp<<")"<<endl;
-			fprintf(pFile,"NOT %s:%d = (%d,%d)\n",s.c_str(),pc,read_data.verdict,read_data.time_stamp);
+			fprintf(pFile,"NOT %s:%d = (%d,%d)\n",s.c_str(),pc,result.verdict,result.time_stamp);
 		}
 	}
 	void dprint2(FILE* pFile,string s) {if(!hasPrint) fprintf(pFile,"NOT %s:%d = (-,-)\n",s.c_str(),pc);}
