@@ -138,7 +138,16 @@ int Formula::read_sensor_num(int pos){
 
 //remove all the space in the string
 string Formula::delSpaces(string &str){
-	str.erase(remove(str.begin(), str.end(), ' '), str.end());
+	//str.erase(remove(str.begin(), str.end(), ' '), str.end());//not working for my Linux machine
+	for(int j=0;j<=str.length();j++)
+	{
+		for(int i=0;i<=j;i++)
+		{
+			if(str[i] == ' ' && str[i+1] == ' ') str.erase(str.begin() + i);
+			else if(str[0]== ' ') str.erase(str.begin());
+			else if(str[i] == '\0' && str[i-1]== ' ') str.erase(str.end() - 1);
+		}
+	}
 	return str;
 }
 

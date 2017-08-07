@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include "CircularBuffer.h"
-#include "observer.h"
+#include "Observer.h"
 #include "common.h"
 
 CircularBuffer::CircularBuffer(): wrPtr(0){
