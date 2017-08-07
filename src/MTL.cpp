@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : MTL.cpp
 // Author      : Pei Zhang
-// Version     : 1.3.1
+// Version     : 1.3.2
 // Copyright   : Your copyright notice
 // Description : Main function for MTL formula verification
 //============================================================================
@@ -53,7 +53,7 @@ int main() {
 		fprintf(pFile,"**********RESULTS**********\n\n");
 		for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 		//MUST follow the update sequence from bottom layer to top layer (no need to care)
-			fprintf(pFile,"----------TIME STEP %d----------\n",i);
+			fprintf(pFile,"----------TIME STEP: %d----------\n",i);
 			#ifndef ASM_MODE
 				for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run(pFile,"NODE");
 			#else
