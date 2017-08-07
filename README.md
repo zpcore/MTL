@@ -40,7 +40,7 @@ sensor[1]=new Event("./src/pitch.log");
 	//string formula="KEP[2]{S[1]}";
 	string formula="AND{AND{S[0],S[1]},ALW[3,5]{S[0]}}";
 ```
-#### For MTL format, see [Notes](## Notes:);
+#### For MTL format, see [Notes](#Notes);
 ---
 ### How to run:
 #### In terminal:
@@ -51,7 +51,7 @@ sensor[1]=new Event("./src/pitch.log");
 ./Debug/MTL
 ```
 ---
-## Notes:
+## Notes
 ### Meaning the MTL String:
 ### Relationship with TACAS14--->
 #### Algorithm 1: "!" = "NOT{}"
@@ -59,3 +59,4 @@ sensor[1]=new Event("./src/pitch.log");
 #### Algorithm 3: "&" = "AND{,}"
 #### Algorithm 4: "G[2,5]" = "ALW[2,5]{}"
 #### Algorithm 5: "F[1,2]" = "UNT[1,2]{,}"
+
