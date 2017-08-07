@@ -30,11 +30,16 @@ void Assembly::Construct(Observer** sensor, Observer** observer){
 	string partial;
 	vector<std::string> tokens;
 	while (getline(infile, line)&&line.compare("")!=0){
+		line.erase(line.find_last_not_of(" \n\r\t")+1);
+		line.erase(0,line.find_first_not_of(" \n\r\t\'1'\'2'\'3'\'4'\'5'\'6'\'7'\'8'\'9'\'0'\':'"));
 		istringstream iss(line);
 		string token;
+		string tinyToken;
 		while(getline(iss, token, ' ')){   // split by space
-		        tokens.push_back(token);
-				//cout<<token<<endl;
+			stringstream isss(token);
+			while(getline(isss, tinyToken, '\t')){
+		        if(tinyToken.compare("")!=0) tokens.push_back(tinyToken);
+			}
 		}
 		if(tokens.at(0).compare("load")==0 || tokens.at(0).compare("load_ft")==0){
 			string src=tokens.at(1);

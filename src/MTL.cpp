@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : MTL.cpp
 // Author      : Pei Zhang
-// Version     : 1.2.0
+// Version     : 1.3.0
 // Copyright   : Your copyright notice
 // Description : Main function for MTL formula verification
 //============================================================================
@@ -37,7 +37,6 @@ int main() {
 	//string formula="AND{ALW[5,10]{S[0]},KEP[2]{S[1]}}";
 	//string formula="KEP[2]{S[1]}";
 	string formula="AND{AND{S[0],S[1]},ALW[3,5]{S[0]}}";
-
 	string asm_file="./src/test.ftasm";
 
 	int num_sensor=2;
@@ -50,43 +49,29 @@ int main() {
 //Don't touch the following code, the program will automatically establish connections between observers
 	#ifndef ASM_MODE
 		int num_observer=0;
-		for(const char& c:formula) num_observer=c=='{'?num_observer+1:num_observer;//auto compute the total number of observers required
+		for(const char& c:formula) num_observer=(c=='{'||c=='s'||c=='S')?num_observer+1:num_observer;//auto compute the total number of observers required
 		cout<<"Number of Observer: "<<num_observer<<endl;
 		Observer** observer=new Observer*[num_observer];
 		Formula f=Formula(formula,sensor,observer);
-		Observer* ROOT=num_observer==0?sensor[f.sensor_tag]:observer[0];//pointer to root observer/sensor
-		cout<<"MTL Formula: "<<formula<<endl<<"-------------------"<<endl;
+		cout<<"MTL Formula: "<<formula<<endl;
 	#else
 		Assembly assm=Assembly(asm_file);
 		Observer** observer=new Observer*[assm.num_of_observer];
 		assm.Construct(sensor, observer);
-		Observer* ROOT=observer[assm.top_ob];//pointer to root observer/sensor
-		//cout<<assm.num_of_observer<<"what"<<endl;
 	#endif
+		cout<<"**********RESULTS**********"<<endl<<endl;
 		for(int i=0;i<tot_IMU;i++){//simulate at each IMU i, the event happens
 		//MUST follow the update sequence from bottom layer to top layer (no need to care)
-			/*EVENT UPDATE*/
-			for(int n=0;n<num_sensor;n++) sensor[n]->check_new_event(i);
-			/*OBSERVER UPDATE*/
-			#ifndef ASM_MODE
-			for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run();
-			/*ROOT OUTPUT UPDATE*/
-			cout<<"MTL RESULT:@RTC " <<i<<"	[time: "<<ROOT->out_node.time_stamp\
-					<<"	ver: " << verdict_interprete(ROOT->out_node.verdict)<<"]"<<endl;
-			cout<<"------------------------------------"<<endl;
-			#else
-			//for(int n=0;n<assm.num_of_observer-1;n++) observer[n]->run();
 			cout<<"----------"<<"TIME STEP: "<<i<<"----------"<<endl;
-			for(int n=0;n<assm.num_of_observer;n++){
-				observer[n]->run();
-				//observer[n]->dprint();
-			}
-			cout<<endl;
+			#ifndef ASM_MODE
+				for(int n=0;n<num_observer;n++) observer[num_observer-n-1]->run("NODE");
+			#else
+				for(int n=0;n<assm.num_of_observer;n++) observer[n]->run("PC");
 			#endif
 
+			cout<<endl;
 		}
 		delete[] sensor;
 		delete[] observer;
-		delete ROOT;
 		return 0;
 }

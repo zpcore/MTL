@@ -13,7 +13,8 @@
 	{S[0]}AND{S[1]}
 	ALW[5,10]{{NOT{S[0]}}AND{NOT{S[1]}}}AND{S[2]}
 */
-#pragma once
+#ifndef SRC_FORMULA_H_
+#define SRC_FORMULA_H_
 
 #include <iostream>
 #include "Observer.h"
@@ -30,6 +31,7 @@ typedef	struct{
 	op_t op;
 	int label;
 	interval_t interval;
+	int sensor;
 }seg_t;
 
 class Formula{
@@ -48,3 +50,4 @@ public:
 private:
 	string s;
 };
+#endif

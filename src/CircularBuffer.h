@@ -24,6 +24,7 @@ public:
 	void decPtr(int&);
 	int preWrPtr();
 	bool recedPtr(int);
+	void debug();
 
 public:
 	en data[circularQueue_size];

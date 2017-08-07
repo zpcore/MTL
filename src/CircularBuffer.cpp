@@ -16,6 +16,7 @@ CircularBuffer::CircularBuffer(): wrPtr(0){
 }
 
 void CircularBuffer::write(en res) {//write with aggregation
+	if(res.time_stamp==-1) return;
 	if(isBottom) atomic.push_back(res);
 	else{
 		if(everWrite){
@@ -50,9 +51,9 @@ void CircularBuffer::decPtr(int &ptr){
 	ptr=ptr==0?circularQueue_size-1:ptr-1;
 }
 
-//en CircularBuffer::peek(int ptr){
-//
-//}
+void CircularBuffer::debug(){
+	for(int i=0;i<circularQueue_size;i++) cout<<"CB["<<i<<"]: ("<<data[i].verdict<<","<<data[i].time_stamp<<")"<<endl;
+}
 
 bool CircularBuffer::isEmpty(int ptr){
 	return ptr==wrPtr||!everWrite;

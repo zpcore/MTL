@@ -2,8 +2,14 @@
 #define COMMON_H_
 
 typedef	struct{
-		int verdict;//0:false, 1:true, 2:maybe
-		int time_stamp;
-	}en;
+	int verdict;//0:false, 1:true, 2:maybe
+	int time_stamp;
+}en;
+
+typedef struct{
+	int rdPtr_mem;
+	int rdPtr2_mem;
+	en result_mem;
+}mem;
 
 #endif

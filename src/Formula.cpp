@@ -3,6 +3,7 @@
 // Author      : Pei Zhang
 // Institution : Iowa State University
 // Description : Compiler for MTL formula
+// Complexity  : O(n), n is the length of the formula
 //============================================================================
 /*
  Stack Data format:
@@ -39,33 +40,58 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 			continue;
 		}
 	//check operator first
-		if(get_type(i)==SEN){
+		if((op=get_type(i))!=ERR){
 			seg_t seg;
-			seg.op=SEN;
-			seg.label=read_sensor_num(i);
-			seg.interval.st=-1;
-			seg.interval.ed=-1;
-			s1.push(seg);
-			while(s.at(i)!=']'){i++;};//skip the sensor segment
-		}
-		else if(get_type(i)!=ERR){
-			seg_t seg;
-			op=get_type(i);
 			seg.op=op;
 			seg.label=observer_label;
-			i+=3;
-			if(!(op==NOT||op==AND)){//have interval
+			seg.interval.st=-1;
+			seg.interval.ed=-1;
+			if(op==SEN){
+				seg.sensor=read_sensor_num(i);
+				while(s.at(i)!=']'){i++;};//skip the sensor segment
+			}else if(!(op==NOT||op==AND)){
+				i+=3;
 				interval=get_interval(i);
 				while(s.at(i++)!=']'){};//skip the interval segment
 				seg.interval=interval;
-			}else{//no interval
-				seg.interval.st=-1;//this operation does not have interval
-				seg.interval.ed=-1;
+				i++;//skip '{'
+			}else{
+				i+=4;//skip '{'
 			}
-			observer_label++;//every operator has an observer label. The label is counting from 0
+			observer_label++;
 			s1.push(seg);
-			i++;//skip '{'
 		}
+
+//		if(get_type(i)==SEN){
+//			seg_t seg;
+//			seg.op=SEN;
+//			seg.label=observer_label;
+//			//seg.label=read_sensor_num(i);
+//			seg.interval.st=-1;
+//			seg.interval.ed=-1;
+//			seg.sensor=read_sensor_num(i);
+//			observer_label++;
+//			s1.push(seg);
+//			while(s.at(i)!=']'){i++;};//skip the sensor segment
+//		}
+//		else if(get_type(i)!=ERR){
+//			seg_t seg;
+//			op=get_type(i);
+//			seg.op=op;
+//			seg.label=observer_label;
+//			i+=3;
+//			if(!(op==NOT||op==AND)){//have interval
+//				interval=get_interval(i);
+//				while(s.at(i++)!=']'){};//skip the interval segment
+//				seg.interval=interval;
+//			}else{//no interval
+//				seg.interval.st=-1;//this operation does not have interval
+//				seg.interval.ed=-1;
+//			}
+//			observer_label++;//every operator has an observer label. The label is counting from 0
+//			s1.push(seg);
+//			i++;//skip '{'
+//		}
 	//pop the operator
 		if(s.at(i)=='}'||s.at(i)==']'){//']'for pop sensor op
 			i++;
@@ -74,34 +100,22 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 			hm[s1.size()].push_back(ob);
 			switch(ob.op){
 			case SEN:
-				sensor_tag=ob.label;
+				observer[ob.label]=new Observer_type_0(sensor[ob.sensor],ob.label);
 				break;
 			case NOT:
-				if(hm[s1.size()+1].at(0).op==SEN) {observer[ob.label]=new Observer_type_1(sensor[hm[s1.size()+1].at(0).label]);}
-				else observer[ob.label]=new Observer_type_1(observer[hm[s1.size()+1].at(0).label]);
+				observer[ob.label]=new Observer_type_1(observer[hm[s1.size()+1].at(0).label],ob.label);
 				break;
 			case KEP:
-				if(hm[s1.size()+1].at(0).op==SEN) observer[ob.label]=new Observer_type_2(sensor[hm[s1.size()+1].at(0).label],ob.interval.ed);
-				else observer[ob.label]=new Observer_type_2(observer[hm[s1.size()+1].at(0).label],ob.interval.ed);
+				observer[ob.label]=new Observer_type_2(observer[hm[s1.size()+1].at(0).label],ob.interval.ed,ob.label);
 				break;
 			case AND:
-				if(hm[s1.size()+1].at(0).op==SEN){
-					if(hm[s1.size()+1].at(1).op==SEN) observer[ob.label]=new Observer_type_3(sensor[hm[s1.size()+1].at(0).label],sensor[hm[s1.size()+1].at(1).label]);
-					else observer[ob.label]=new Observer_type_3(sensor[hm[s1.size()+1].at(0).label],observer[hm[s1.size()+1].at(1).label]);
-				}else{
-					if(hm[s1.size()+1].at(1).op==SEN) observer[ob.label]=new Observer_type_3(observer[hm[s1.size()+1].at(0).label],sensor[hm[s1.size()+1].at(1).label]);
-					else observer[ob.label]=new Observer_type_3(observer[hm[s1.size()+1].at(0).label],observer[hm[s1.size()+1].at(1).label]);
-				}
+				observer[ob.label]=new Observer_type_3(observer[hm[s1.size()+1].at(0).label],observer[hm[s1.size()+1].at(1).label],ob.label);
 				break;
 			case ALW:
-				if(hm[s1.size()+1].at(0).op==SEN) observer[ob.label]=new Observer_type_4(sensor[hm[s1.size()+1].at(0).label],ob.interval.st,ob.interval.ed);
-				else observer[ob.label]=new Observer_type_4(observer[hm[s1.size()+1].at(0).label],ob.interval.st,ob.interval.ed);
+				observer[ob.label]=new Observer_type_4(observer[hm[s1.size()+1].at(0).label],ob.interval.st,ob.interval.ed,ob.label);
 				break;
 			//TODO
 			case UNT:
-				break;
-			//TODO
-			case REL:
 				break;
 			//TODO
 			case ERR:
