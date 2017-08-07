@@ -31,7 +31,7 @@ Formula::Formula(string str,Observer** sensor,Observer** observer):s(str){
 	int observer_label=0;
 	op_t op=ERR;
 	interval_t interval;
-	int i=0;
+	unsigned int i=0;
 	sensor_tag=-1;
 	while(i<s.length()){
 		//char c=s.at(i);
@@ -139,9 +139,9 @@ int Formula::read_sensor_num(int pos){
 //remove all the space in the string
 string Formula::delSpaces(string &str){
 	//str.erase(remove(str.begin(), str.end(), ' '), str.end());//not working for my Linux machine
-	for(int j=0;j<=str.length();j++)
+	for(unsigned int j=0;j<=str.length();j++)
 	{
-		for(int i=0;i<=j;i++)
+		for(unsigned int i=0;i<=j;i++)
 		{
 			if(str[i] == ' ' && str[i+1] == ' ') str.erase(str.begin() + i);
 			else if(str[0]== ' ') str.erase(str.begin());
